@@ -20,5 +20,45 @@ const basis = import.meta.env.BASE_URL.replace(/\/$/, '');
         </div>
       </div>
     </section>
+
+    <section class="uitleg ai-stack" aria-labelledby="zo-werkt-het">
+      <div class="ai-section-head">
+        <h2 id="zo-werkt-het">Zo werkt het</h2>
+      </div>
+      <ol class="uitleg__stappen">
+        <li>Kies Vereenvoudigen of Optellen.</li>
+        <li>Typ je antwoord als een breuk, bijvoorbeeld 1/2, en klik op Controleer.</li>
+        <li>Je ziet meteen of je antwoord juist is. Is het niet juist, dan zie je het juiste antwoord.</li>
+      </ol>
+      <p class="uitleg__tekst">
+        Vereenvoudig je antwoord altijd zo ver als het kan: als de uitkomst 1/2 is, dan telt 2/4
+        niet. Lukt een oefening niet? Dan kan je ze overslaan. Je hoeft je niet aan te melden en er
+        wordt niets bewaard.
+      </p>
+    </section>
   </main>
 </Layout>
+
+<style>
+  /* Dezelfde linkerrand als de titel erboven, en hoogstens ongeveer 65 tekens per regel. */
+  .uitleg {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: var(--space-7) 16px;
+  }
+
+  .uitleg__stappen,
+  .uitleg__tekst {
+    max-width: 620px;
+    margin: 0;
+    font: 400 17px/26px var(--font-sans);
+    color: var(--ink);
+  }
+
+  .uitleg__stappen {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding-left: var(--space-5);
+  }
+</style>
