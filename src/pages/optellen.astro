@@ -1,0 +1,17 @@
+---
+import Oefenscherm from '../components/Oefenscherm.astro';
+---
+
+<Oefenscherm titel="Breuken optellen" opdracht="Reken uit en vereenvoudig je antwoord zo ver als het kan:" />
+
+<script>
+  import { maakSom, somAlsTekst, somUitkomst, type Som } from '../lib/breuken';
+  import { startOefening } from '../lib/oefenscherm';
+
+  startOefening<Som>({
+    maak: (vorige) => maakSom(vorige),
+    alsTekst: somAlsTekst,
+    uitkomst: somUitkomst,
+    bevestiging: (som, juist) => `${somAlsTekst(som)} = ${juist}.`,
+  });
+</script>

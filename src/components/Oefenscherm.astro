@@ -1,0 +1,112 @@
+---
+// Het scherm dat elke oefening deelt. De pagina start het met startOefening uit src/lib/oefenscherm.ts.
+import Layout from '../layouts/Layout.astro';
+
+interface Props {
+  titel: string;
+  opdracht: string;
+}
+
+const { titel, opdracht } = Astro.props;
+---
+
+<Layout title={titel}>
+  <main class="oefening ai-stack">
+    <h1 class="oefening__titel">{titel}</h1>
+
+    <form id="formulier" class="ai-stack" novalidate>
+      <div class="ai-field">
+        <label class="ai-field__label" for="antwoord">
+          {opdracht}
+          <span id="opgave" class="oefening__breuk"></span>
+        </label>
+        <input
+          id="antwoord"
+          class="ai-input"
+          type="text"
+          autocomplete="off"
+          autocapitalize="off"
+          spellcheck="false"
+          placeholder="Typ je antwoord, bijvoorbeeld 1/2"
+        />
+      </div>
+      <div>
+        <button id="controleer" class="ai-btn ai-btn--primary" type="submit">Controleer</button>
+      </div>
+    </form>
+
+    <!-- Dit kader staat er altijd, ook leeg: zo leest een schermlezer elke nieuwe tekst erin voor. -->
+    <div id="terugkoppeling" role="status"></div>
+
+    <div>
+      <button id="volgende" class="ai-btn ai-btn--primary" type="button" hidden>
+        Volgende oefening
+      </button>
+    </div>
+  </main>
+
+  <template id="sjabloon-juist">
+    <div class="ai-feedback ai-feedback--correct">
+      <span class="ai-feedback__icon">
+        <svg class="ai-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 12.5l4.5 4.5L19 7.5"></path>
+        </svg>
+      </span>
+      <div class="ai-feedback__body">
+        <p class="ai-feedback__title">Juist</p>
+        <p data-uitleg></p>
+      </div>
+    </div>
+  </template>
+
+  <template id="sjabloon-fout">
+    <div class="ai-feedback ai-feedback--wrong">
+      <span class="ai-feedback__icon">
+        <svg class="ai-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18"></path>
+        </svg>
+      </span>
+      <div class="ai-feedback__body">
+        <p class="ai-feedback__title">Niet juist</p>
+        <p data-uitleg></p>
+      </div>
+    </div>
+  </template>
+
+  <template id="sjabloon-geen-breuk">
+    <div class="ai-callout ai-callout--warning">
+      <svg class="ai-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 4l9 16H3zM12 10v4M12 17v.5"></path>
+      </svg>
+      <p>Typ een breuk zoals 1/2.</p>
+    </div>
+  </template>
+</Layout>
+
+<style>
+  .oefening {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: var(--space-6) 16px;
+  }
+
+  .oefening__titel {
+    margin: 0;
+    font: 800 40px/44px var(--font-sans);
+    letter-spacing: -0.02em;
+    color: var(--forest);
+    text-wrap: balance;
+  }
+
+  .oefening__breuk {
+    display: block;
+    margin-top: var(--space-2);
+    font: 800 40px/44px var(--font-sans);
+  }
+
+  /* De knopstijl van het design system zou de knop anders toch tonen. */
+  #volgende[hidden],
+  #controleer[hidden] {
+    display: none;
+  }
+</style>

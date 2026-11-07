@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Stand van zaken
 
-De basis staat: een Astro-project met een startpagina, de gedeelde layout `src/layouts/Layout.astro`, tests en een automatische controle op elke pull request (`.github/workflows/ci.yml`). De oefening vereenvoudigen staat in `src/pages/vereenvoudigen.astro`, de rekenregels in `src/lib/breuken.ts`. Het optellen is er nog niet.
+De basis staat: een Astro-project met een startpagina, de gedeelde layout `src/layouts/Layout.astro`, tests en een automatische controle op elke pull request (`.github/workflows/ci.yml`). De oefeningen staan in `src/pages/vereenvoudigen.astro` en `src/pages/optellen.astro`. Ze delen het scherm `src/components/Oefenscherm.astro` en het gedrag in `src/lib/oefenscherm.ts`. De rekenregels staan in `src/lib/breuken.ts`.
 
 `PROJECT_OVERVIEW.md` is de bron voor wat de app moet doen, wat er bewust nog niet in komt, en waarom. Lees die eerst.
 

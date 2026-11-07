@@ -72,7 +72,66 @@ function maakAlleOefeningen(): Breuk[] {
 export const alleOefeningen: readonly Breuk[] = maakAlleOefeningen();
 
 // Kiest een willekeurige oefening, nooit dezelfde als de vorige.
-export function maakOefening(vorige?: Breuk, kans: () => number = Math.random): Breuk {
-  const keuzes = alleOefeningen.filter((oefening) => !vorige || !zijnGelijk(oefening, vorige));
+function kiesAnders<T>(
+  lijst: readonly T[],
+  isZelfde: (a: T, b: T) => boolean,
+  vorige: T | undefined,
+  kans: () => number,
+): T {
+  const keuzes = lijst.filter((item) => vorige === undefined || !isZelfde(item, vorige));
   return keuzes[Math.floor(kans() * keuzes.length)];
+}
+
+export function maakOefening(vorige?: Breuk, kans: () => number = Math.random): Breuk {
+  return kiesAnders(alleOefeningen, zijnGelijk, vorige, kans);
+}
+
+export interface Som {
+  eerste: Breuk;
+  tweede: Breuk;
+}
+
+const GROOTSTE_NOEMER_SOM = 12;
+
+// De uitkomst met de noemers vermenigvuldigd, dus nog niet vereenvoudigd.
+export function somUitkomst({ eerste, tweede }: Som): Breuk {
+  return {
+    teller: eerste.teller * tweede.noemer + tweede.teller * eerste.noemer,
+    noemer: eerste.noemer * tweede.noemer,
+  };
+}
+
+export function somAlsTekst({ eerste, tweede }: Som): string {
+  return `${breukAlsTekst(eerste)} + ${breukAlsTekst(tweede)}`;
+}
+
+// 1/4 + 1/2 en 1/2 + 1/4 voelen voor een leerling als dezelfde oefening.
+function zijnDezelfdeSom(a: Som, b: Som): boolean {
+  return (
+    (zijnGelijk(a.eerste, b.eerste) && zijnGelijk(a.tweede, b.tweede)) ||
+    (zijnGelijk(a.eerste, b.tweede) && zijnGelijk(a.tweede, b.eerste))
+  );
+}
+
+function maakAlleSommen(): Som[] {
+  const breuken: Breuk[] = [];
+  for (let noemer = 2; noemer <= GROOTSTE_NOEMER_SOM; noemer++) {
+    for (let teller = 1; teller < noemer; teller++) breuken.push({ teller, noemer });
+  }
+
+  const sommen: Som[] = [];
+  for (const eerste of breuken) {
+    for (const tweede of breuken) {
+      const uitkomst = somUitkomst({ eerste, tweede });
+      if (uitkomst.teller < uitkomst.noemer) sommen.push({ eerste, tweede });
+    }
+  }
+  return sommen;
+}
+
+// Elke som van twee breuken groter dan 0, met noemers tot en met 12 en een uitkomst kleiner dan 1.
+export const alleSommen: readonly Som[] = maakAlleSommen();
+
+export function maakSom(vorige?: Som, kans: () => number = Math.random): Som {
+  return kiesAnders(alleSommen, zijnDezelfdeSom, vorige, kans);
 }
