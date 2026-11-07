@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 De basis staat: een Astro-project met een startpagina, de gedeelde layout `src/layouts/Layout.astro`, tests en een automatische controle op elke pull request (`.github/workflows/ci.yml`). De oefeningen staan in `src/pages/vereenvoudigen.astro` en `src/pages/optellen.astro`. Ze delen het scherm `src/components/Oefenscherm.astro` en het gedrag in `src/lib/oefenscherm.ts`. De rekenregels staan in `src/lib/breuken.ts`.
 
+Elke push naar `main` publiceert de site op https://yvanvds.github.io/workshop-test-breuken/ via `.github/workflows/publiceren.yml`. Die workflow draait niet op een pull request; `tests/publiceren.test.ts` controleert hem wel vooraf.
+
 `PROJECT_OVERVIEW.md` is de bron voor wat de app moet doen, wat er bewust nog niet in komt, en waarom. Lees die eerst.
 
 De gebruiker is een leerkracht zonder programmeerervaring. Praat Nederlands, kort en zonder jargon.
