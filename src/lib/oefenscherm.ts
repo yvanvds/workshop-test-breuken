@@ -15,6 +15,8 @@ export function startOefening<Oefening>(soort: Oefensoort<Oefening>) {
   const controleer = document.querySelector<HTMLButtonElement>('#controleer')!;
   const terugkoppeling = document.querySelector<HTMLElement>('#terugkoppeling')!;
   const volgende = document.querySelector<HTMLButtonElement>('#volgende')!;
+  // Staat alleen op het scherm als de pagina kanOverslaan meegeeft.
+  const overslaan = document.querySelector<HTMLButtonElement>('#overslaan');
 
   let oefening = soort.maak();
   let beantwoord = false;
@@ -34,8 +36,14 @@ export function startOefening<Oefening>(soort: Oefensoort<Oefening>) {
     antwoord.value = '';
     antwoord.readOnly = false;
     controleer.hidden = false;
+    if (overslaan) overslaan.hidden = false;
     volgende.hidden = true;
     antwoord.focus();
+  }
+
+  function toonNieuweOefening() {
+    oefening = soort.maak(oefening);
+    toonOefening();
   }
 
   formulier.addEventListener('submit', (gebeurtenis) => {
@@ -65,14 +73,13 @@ export function startOefening<Oefening>(soort: Oefensoort<Oefening>) {
     beantwoord = true;
     antwoord.readOnly = true;
     controleer.hidden = true;
+    if (overslaan) overslaan.hidden = true;
     volgende.hidden = false;
     volgende.focus();
   });
 
-  volgende.addEventListener('click', () => {
-    oefening = soort.maak(oefening);
-    toonOefening();
-  });
+  volgende.addEventListener('click', toonNieuweOefening);
+  overslaan?.addEventListener('click', toonNieuweOefening);
 
   toonOefening();
 }
