@@ -4,13 +4,30 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Stand van zaken
 
-Er is nog geen applicatiecode: geen `package.json`, Astro-project of tests. Vul deze file aan zodra de echte commando's bestaan (dev, build, één test uitvoeren).
+De basis staat: een Astro-project met een startpagina, de gedeelde layout `src/layouts/Layout.astro`, tests en een automatische controle op elke pull request (`.github/workflows/ci.yml`). De oefeningen staan in `src/pages/vereenvoudigen.astro` en `src/pages/optellen.astro`. Ze delen het scherm `src/components/Oefenscherm.astro` en het gedrag in `src/lib/oefenscherm.ts`. De rekenregels staan in `src/lib/breuken.ts`.
+
+Elke push naar `main` publiceert de site op https://yvanvds.github.io/workshop-test-breuken/ via `.github/workflows/publiceren.yml`. Die workflow draait niet op een pull request; `tests/publiceren.test.ts` controleert hem wel vooraf.
 
 `PROJECT_OVERVIEW.md` is de bron voor wat de app moet doen, wat er bewust nog niet in komt, en waarom. Lees die eerst.
 
 De gebruiker is een leerkracht zonder programmeerervaring. Praat Nederlands, kort en zonder jargon.
 
-## Geplande technische basis
+## Commando's
+
+| Wat | Commando |
+|---|---|
+| De app starten | `npm run dev`, daarna op `http://localhost:4321/workshop-test-breuken/` |
+| Bouwen | `npm run build` |
+| Alle tests voor de werking (Vitest, in `tests/` en `src/`) | `npm test` |
+| Eén test voor de werking | `npx vitest run tests/config.test.ts` |
+| Alle tests met de echte app (Playwright, in `e2e/`) | `npm run test:e2e` |
+| Eén test met de echte app | `npx playwright test e2e/startpagina.spec.ts` |
+
+De eerste keer op een nieuwe computer: `npm ci` en `npx playwright install chromium`.
+
+Start een AI-agent `npm run dev`, dan draait Astro op de achtergrond verder. Stop de site daarna met `npx astro dev stop`.
+
+## Technische basis
 
 - **App:** Astro, statisch gepubliceerd op GitHub Pages. De repo is `yvanvds/workshop-test-breuken`, dus de site komt onder het subpad `/workshop-test-breuken/`. Zet `site` en `base` in de Astro-configuratie en laat links en bestanden daarmee rekening houden.
 - **Tests:** Vitest voor de werking, Playwright voor de echte app. Dit is de keuze uit `.claude/skills/work-issue/SKILL.md`.
@@ -26,7 +43,7 @@ Wijzigingen verlopen via GitHub-issues en de skills in `.claude/skills/`:
 
 `.claude/settings.json` bepaalt wat zonder toestemming mag. Force-push, `git reset --hard`, `git clean` en `gh repo delete` zijn geblokkeerd.
 
-`.github/` is een kopie van de sjablonen in `.claude/skills/bootstrap-github/templates/`.
+De sjablonen in `.github/` zijn een kopie van `.claude/skills/bootstrap-github/templates/`. `.github/workflows/ci.yml` hoort bij dit project.
 
 ## Vormgeving
 

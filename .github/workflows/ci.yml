@@ -1,0 +1,26 @@
+name: Controle
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  controle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Tests voor de werking (Vitest)
+        run: npm test
+      - name: Browser voor Playwright installeren
+        run: npx playwright install --with-deps chromium
+      - name: Tests met de echte app (Playwright)
+        run: npm run test:e2e
+      - name: Build
+        run: npm run build

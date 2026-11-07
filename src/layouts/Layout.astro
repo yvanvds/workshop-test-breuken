@@ -1,0 +1,31 @@
+---
+import '../../design-system/tokens.css';
+import '../../design-system/components/bundle.css';
+import logo from '../../design-system/assets/Logos/arcadia-logo.svg';
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!-- De eerste versie gebruikt alleen het lichte thema, dus ook alleen het originele logo. -->
+<html lang="nl" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+  </head>
+  <body class="ai-root">
+    <header class="ai-header">
+      <div class="ai-header__inner">
+        <a class="ai-header__brand" href={import.meta.env.BASE_URL}>
+          <img class="ai-logo--light" src={logo.src} alt="Arcadia scholen" />
+        </a>
+      </div>
+    </header>
+    <slot />
+    <script src="../../design-system/components/bundle.js"></script>
+  </body>
+</html>

@@ -37,4 +37,4 @@ Gebruikt het design system in `design-system/`.
 - De app mag nooit een fout antwoord als juist tonen.
 
 ## Publicatie
-Via GitHub Pages. De leerkracht deelt de link met de leerlingen.
+Via GitHub Pages. De leerkracht deelt de link met de leerlingen: https://yvanvds.github.io/workshop-test-breuken/

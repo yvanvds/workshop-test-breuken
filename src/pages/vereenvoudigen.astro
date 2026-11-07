@@ -1,0 +1,17 @@
+---
+import Oefenscherm from '../components/Oefenscherm.astro';
+---
+
+<Oefenscherm titel="Breuken vereenvoudigen" opdracht="Vereenvoudig deze breuk zo ver als het kan:" />
+
+<script>
+  import { breukAlsTekst, maakOefening, type Breuk } from '../lib/breuken';
+  import { startOefening } from '../lib/oefenscherm';
+
+  startOefening<Breuk>({
+    maak: (vorige) => maakOefening(vorige),
+    alsTekst: breukAlsTekst,
+    uitkomst: (oefening) => oefening,
+    bevestiging: (oefening, juist) => `${breukAlsTekst(oefening)} vereenvoudigd is ${juist}.`,
+  });
+</script>
