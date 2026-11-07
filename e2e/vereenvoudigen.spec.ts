@@ -59,18 +59,151 @@ test('een juist en een fout antwoord geven de juiste terugkoppeling en een volge
   await expect(veld).toBeFocused();
 });
 
-test('op deze pagina staat de knop Oefening overslaan niet', async ({ page }) => {
+test('de knop Oefening overslaan staat naast Controleer', async ({ page }) => {
   await openOefening(page);
+
+  const controleer = await page.getByRole('button', { name: 'Controleer' }).boundingBox();
+  const overslaan = await page.getByRole('button', { name: 'Oefening overslaan' }).boundingBox();
+  expect(overslaan!.y).toBe(controleer!.y);
+  expect(overslaan!.x).toBeGreaterThan(controleer!.x + controleer!.width);
+});
+
+test('overslaan geeft een andere breuk, zonder terugkoppeling en zonder antwoord', async ({
+  page,
+}) => {
+  await openOefening(page);
+  const veld = page.getByRole('textbox');
   const overslaan = page.getByRole('button', { name: 'Oefening overslaan' });
-  await expect(overslaan).toHaveCount(0);
 
-  await page.getByRole('textbox').fill((await leesOefening(page)).juist);
-  await page.getByRole('textbox').press('Enter');
-  await expect(page.getByRole('status').getByText('Juist', { exact: true })).toBeVisible();
-  await expect(overslaan).toHaveCount(0);
+  // Met een leeg veld.
+  const eerste = await leesOefening(page);
+  await overslaan.click();
+  const tweede = await leesOefening(page);
+  expect(tweede.tekst).not.toBe(eerste.tekst);
+  await expect(veld).toHaveValue('');
+  await expect(veld).toBeFocused();
+  await expect(page.getByRole('status')).toBeEmpty();
+  await expect(page.locator('main')).not.toContainText(/juist/i);
 
-  await page.getByRole('button', { name: 'Volgende oefening' }).click();
-  await expect(overslaan).toHaveCount(0);
+  // Met een getypt antwoord: dat verdwijnt en wordt niet beoordeeld.
+  await veld.fill(tweede.juist);
+  await overslaan.click();
+  expect((await leesOefening(page)).tekst).not.toBe(tweede.tekst);
+  await expect(veld).toHaveValue('');
+  await expect(veld).toBeFocused();
+  await expect(page.getByRole('status')).toBeEmpty();
+  await expect(page.locator('main')).not.toContainText(/juist/i);
+});
+
+test('overslaan haalt de melding over een antwoord zonder breuk weg', async ({ page }) => {
+  await openOefening(page);
+  const veld = page.getByRole('textbox');
+  const status = page.getByRole('status');
+
+  const eerste = await leesOefening(page);
+  await veld.fill('abc');
+  await veld.press('Enter');
+  await expect(status).toContainText('Typ een breuk zoals 1/2.');
+
+  await page.getByRole('button', { name: 'Oefening overslaan' }).click();
+  expect((await leesOefening(page)).tekst).not.toBe(eerste.tekst);
+  await expect(status).toBeEmpty();
+  await expect(veld).toHaveValue('');
+  await expect(veld).toBeFocused();
+});
+
+test('na een controle is de knop weg, bij de volgende oefening staat hij er weer', async ({
+  page,
+}) => {
+  await openOefening(page);
+  const veld = page.getByRole('textbox');
+  const overslaan = page.getByRole('button', { name: 'Oefening overslaan' });
+  const volgende = page.getByRole('button', { name: 'Volgende oefening' });
+
+  // Een melding is geen controle: dan kan de leerling nog overslaan.
+  await veld.fill('abc');
+  await veld.press('Enter');
+  await expect(overslaan).toBeVisible();
+
+  await veld.fill((await leesOefening(page)).juist);
+  await page.getByRole('button', { name: 'Controleer' }).click();
+  await expect(overslaan).toBeHidden();
+  await expect(volgende).toBeVisible();
+
+  await volgende.click();
+  await expect(overslaan).toBeVisible();
+  await expect(volgende).toBeHidden();
+});
+
+test('Enter controleert het antwoord en slaat de oefening niet over', async ({ page }) => {
+  await openOefening(page);
+  const veld = page.getByRole('textbox');
+  const status = page.getByRole('status');
+
+  const { tekst, juist } = await leesOefening(page);
+  await veld.fill(juist);
+  await veld.press('Enter');
+  await expect(status.getByText('Juist', { exact: true })).toBeVisible();
+  await expect(page.locator('#opgave')).toHaveText(tekst);
+  await expect(veld).toHaveValue(juist);
+});
+
+test('na het overslaan gelden de regels voor het beoordelen voor de nieuwe breuk', async ({
+  page,
+}) => {
+  await openOefening(page);
+  const veld = page.getByRole('textbox');
+  const status = page.getByRole('status');
+  const overslaan = page.getByRole('button', { name: 'Oefening overslaan' });
+  const volgende = page.getByRole('button', { name: 'Volgende oefening' });
+
+  // De breuk zelf overtypen blijft fout: die is nog niet vereenvoudigd.
+  await overslaan.click();
+  const eerste = await leesOefening(page);
+  await veld.fill(eerste.tekst);
+  await veld.press('Enter');
+  await expect(status.getByText('Niet juist', { exact: true })).toBeVisible();
+  await expect(status).toContainText(`Het juiste antwoord is ${eerste.juist}.`);
+  await volgende.click();
+
+  // Het antwoord op de overgeslagen breuk telt niet voor de nieuwe, tenzij de uitkomst gelijk is.
+  const tweede = await leesOefening(page);
+  await overslaan.click();
+  const derde = await leesOefening(page);
+  await veld.fill(tweede.juist);
+  await veld.press('Enter');
+  if (tweede.juist === derde.juist) {
+    await expect(status.getByText('Juist', { exact: true })).toBeVisible();
+  } else {
+    await expect(status.getByText('Niet juist', { exact: true })).toBeVisible();
+    await expect(status).toContainText(`Het juiste antwoord is ${derde.juist}.`);
+  }
+  await volgende.click();
+
+  // Het juiste antwoord op de nieuwe breuk is juist.
+  await overslaan.click();
+  await veld.fill((await leesOefening(page)).juist);
+  await veld.press('Enter');
+  await expect(status.getByText('Juist', { exact: true })).toBeVisible();
+});
+
+test('de oefening past op de breedte van een gsm, met beide knoppen zichtbaar', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 640 });
+  await openOefening(page);
+
+  const breedte = await page.evaluate(() => ({
+    inhoud: document.documentElement.scrollWidth,
+    scherm: document.documentElement.clientWidth,
+  }));
+  expect(breedte.inhoud).toBeLessThanOrEqual(breedte.scherm);
+
+  for (const naam of ['Controleer', 'Oefening overslaan']) {
+    const knop = page.getByRole('button', { name: naam });
+    await expect(knop).toBeVisible();
+    const vak = await knop.boundingBox();
+    expect(vak!.x).toBeGreaterThanOrEqual(0);
+    expect(vak!.x + vak!.width).toBeLessThanOrEqual(320);
+  }
 });
 
 test('een antwoord dat geen breuk is telt niet, en de oefening blijft staan', async ({ page }) => {

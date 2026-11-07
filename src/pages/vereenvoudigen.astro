@@ -2,7 +2,11 @@
 import Oefenscherm from '../components/Oefenscherm.astro';
 ---
 
-<Oefenscherm titel="Breuken vereenvoudigen" opdracht="Vereenvoudig deze breuk zo ver als het kan:" />
+<Oefenscherm
+  titel="Breuken vereenvoudigen"
+  opdracht="Vereenvoudig deze breuk zo ver als het kan:"
+  kanOverslaan
+/>
 
 <script>
   import { breukAlsTekst, maakOefening, type Breuk } from '../lib/breuken';
