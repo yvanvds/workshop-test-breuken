@@ -1,0 +1,175 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Breuken vereenvoudigen">
+  <main class="oefening ai-stack">
+    <h1 class="oefening__titel">Breuken vereenvoudigen</h1>
+
+    <form id="formulier" class="ai-stack" novalidate>
+      <div class="ai-field">
+        <label class="ai-field__label" for="antwoord">
+          Vereenvoudig deze breuk zo ver als het kan:
+          <span id="opgave" class="oefening__breuk"></span>
+        </label>
+        <input
+          id="antwoord"
+          class="ai-input"
+          type="text"
+          autocomplete="off"
+          autocapitalize="off"
+          spellcheck="false"
+          placeholder="Typ je antwoord, bijvoorbeeld 1/2"
+        />
+      </div>
+      <div>
+        <button id="controleer" class="ai-btn ai-btn--primary" type="submit">Controleer</button>
+      </div>
+    </form>
+
+    <!-- Dit kader staat er altijd, ook leeg: zo leest een schermlezer elke nieuwe tekst erin voor. -->
+    <div id="terugkoppeling" role="status"></div>
+
+    <div>
+      <button id="volgende" class="ai-btn ai-btn--primary" type="button" hidden>
+        Volgende oefening
+      </button>
+    </div>
+  </main>
+
+  <template id="sjabloon-juist">
+    <div class="ai-feedback ai-feedback--correct">
+      <span class="ai-feedback__icon">
+        <svg class="ai-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 12.5l4.5 4.5L19 7.5"></path>
+        </svg>
+      </span>
+      <div class="ai-feedback__body">
+        <p class="ai-feedback__title">Juist</p>
+        <p data-uitleg></p>
+      </div>
+    </div>
+  </template>
+
+  <template id="sjabloon-fout">
+    <div class="ai-feedback ai-feedback--wrong">
+      <span class="ai-feedback__icon">
+        <svg class="ai-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18"></path>
+        </svg>
+      </span>
+      <div class="ai-feedback__body">
+        <p class="ai-feedback__title">Niet juist</p>
+        <p data-uitleg></p>
+      </div>
+    </div>
+  </template>
+
+  <template id="sjabloon-geen-breuk">
+    <div class="ai-callout ai-callout--warning">
+      <svg class="ai-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 4l9 16H3zM12 10v4M12 17v.5"></path>
+      </svg>
+      <p>Typ een breuk zoals 1/2.</p>
+    </div>
+  </template>
+</Layout>
+
+<style>
+  .oefening {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: var(--space-6) 16px;
+  }
+
+  .oefening__titel {
+    margin: 0;
+    font: 800 40px/44px var(--font-sans);
+    letter-spacing: -0.02em;
+    color: var(--forest);
+    text-wrap: balance;
+  }
+
+  .oefening__breuk {
+    display: block;
+    margin-top: var(--space-2);
+    font: 800 40px/44px var(--font-sans);
+  }
+
+  /* De knopstijl van het design system zou de knop anders toch tonen. */
+  #volgende[hidden],
+  #controleer[hidden] {
+    display: none;
+  }
+</style>
+
+<script>
+  import { beoordeel, breukAlsTekst, maakOefening, type Breuk } from '../lib/breuken';
+
+  const opgave = document.querySelector<HTMLElement>('#opgave')!;
+  const formulier = document.querySelector<HTMLFormElement>('#formulier')!;
+  const antwoord = document.querySelector<HTMLInputElement>('#antwoord')!;
+  const controleer = document.querySelector<HTMLButtonElement>('#controleer')!;
+  const terugkoppeling = document.querySelector<HTMLElement>('#terugkoppeling')!;
+  const volgende = document.querySelector<HTMLButtonElement>('#volgende')!;
+
+  let oefening: Breuk = maakOefening();
+  let beantwoord = false;
+
+  function toonTerugkoppeling(sjabloon: string, uitleg?: string) {
+    const inhoud = document
+      .querySelector<HTMLTemplateElement>(sjabloon)!
+      .content.cloneNode(true) as DocumentFragment;
+    if (uitleg) inhoud.querySelector('[data-uitleg]')!.textContent = uitleg;
+    terugkoppeling.replaceChildren(inhoud);
+  }
+
+  function toonOefening() {
+    beantwoord = false;
+    opgave.textContent = breukAlsTekst(oefening);
+    terugkoppeling.replaceChildren();
+    antwoord.value = '';
+    antwoord.readOnly = false;
+    controleer.hidden = false;
+    volgende.hidden = true;
+    antwoord.focus();
+  }
+
+  formulier.addEventListener('submit', (gebeurtenis) => {
+    gebeurtenis.preventDefault();
+    if (beantwoord) return;
+
+    const uitslag = beoordeel(oefening, antwoord.value);
+
+    if (uitslag.soort === 'geen-breuk') {
+      toonTerugkoppeling('#sjabloon-geen-breuk');
+      antwoord.focus();
+      return;
+    }
+
+    const juist = breukAlsTekst(uitslag.juistAntwoord);
+    if (uitslag.soort === 'juist') {
+      toonTerugkoppeling('#sjabloon-juist', `${breukAlsTekst(oefening)} vereenvoudigd is ${juist}.`);
+    } else if (uitslag.nogTeVereenvoudigen) {
+      toonTerugkoppeling(
+        '#sjabloon-fout',
+        `Je antwoord is even groot, maar je kan het nog verder vereenvoudigen. Het juiste antwoord is ${juist}.`,
+      );
+    } else {
+      toonTerugkoppeling('#sjabloon-fout', `Het juiste antwoord is ${juist}.`);
+    }
+
+    beantwoord = true;
+    antwoord.readOnly = true;
+    controleer.hidden = true;
+    volgende.hidden = false;
+    volgende.focus();
+  });
+
+  volgende.addEventListener('click', () => {
+    oefening = maakOefening(oefening);
+    toonOefening();
+  });
+
+  toonOefening();
+</script>

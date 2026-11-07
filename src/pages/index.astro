@@ -1,5 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
+
+const basis = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <Layout title="Breuken oefenen">
@@ -9,8 +11,11 @@ import Layout from '../layouts/Layout.astro';
         <div class="ai-hero__text">
           <h1 class="ai-hero__title">Breuken oefenen</h1>
           <p class="ai-hero__lead">
-            Hier leer je breuken vereenvoudigen en optellen. De oefeningen komen er binnenkort aan.
+            Kies wat je wil oefenen. Je ziet meteen of je antwoord juist is.
           </p>
+          <div class="ai-hero__actions">
+            <a class="ai-btn ai-btn--primary" href={`${basis}/vereenvoudigen/`}>Vereenvoudigen</a>
+          </div>
         </div>
       </div>
     </section>
