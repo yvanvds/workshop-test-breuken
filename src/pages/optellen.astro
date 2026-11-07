@@ -2,7 +2,11 @@
 import Oefenscherm from '../components/Oefenscherm.astro';
 ---
 
-<Oefenscherm titel="Breuken optellen" opdracht="Reken uit en vereenvoudig je antwoord zo ver als het kan:" />
+<Oefenscherm
+  titel="Breuken optellen"
+  opdracht="Reken uit en vereenvoudig je antwoord zo ver als het kan:"
+  kanOverslaan
+/>
 
 <script>
   import { maakSom, somAlsTekst, somUitkomst, type Som } from '../lib/breuken';

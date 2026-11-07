@@ -59,6 +59,20 @@ test('een juist en een fout antwoord geven de juiste terugkoppeling en een volge
   await expect(veld).toBeFocused();
 });
 
+test('op deze pagina staat de knop Oefening overslaan niet', async ({ page }) => {
+  await openOefening(page);
+  const overslaan = page.getByRole('button', { name: 'Oefening overslaan' });
+  await expect(overslaan).toHaveCount(0);
+
+  await page.getByRole('textbox').fill((await leesOefening(page)).juist);
+  await page.getByRole('textbox').press('Enter');
+  await expect(page.getByRole('status').getByText('Juist', { exact: true })).toBeVisible();
+  await expect(overslaan).toHaveCount(0);
+
+  await page.getByRole('button', { name: 'Volgende oefening' }).click();
+  await expect(overslaan).toHaveCount(0);
+});
+
 test('een antwoord dat geen breuk is telt niet, en de oefening blijft staan', async ({ page }) => {
   await openOefening(page);
   const { tekst, juist } = await leesOefening(page);

@@ -5,9 +5,10 @@ import Layout from '../layouts/Layout.astro';
 interface Props {
   titel: string;
   opdracht: string;
+  kanOverslaan?: boolean;
 }
 
-const { titel, opdracht } = Astro.props;
+const { titel, opdracht, kanOverslaan = false } = Astro.props;
 ---
 
 <Layout title={titel}>
@@ -30,8 +31,15 @@ const { titel, opdracht } = Astro.props;
           placeholder="Typ je antwoord, bijvoorbeeld 1/2"
         />
       </div>
-      <div>
+      <div class="ai-row">
         <button id="controleer" class="ai-btn ai-btn--primary" type="submit">Controleer</button>
+        {
+          kanOverslaan && (
+            <button id="overslaan" class="ai-btn ai-btn--secondary" type="button">
+              Oefening overslaan
+            </button>
+          )
+        }
       </div>
     </form>
 
@@ -106,7 +114,8 @@ const { titel, opdracht } = Astro.props;
 
   /* De knopstijl van het design system zou de knop anders toch tonen. */
   #volgende[hidden],
-  #controleer[hidden] {
+  #controleer[hidden],
+  #overslaan[hidden] {
     display: none;
   }
 </style>
