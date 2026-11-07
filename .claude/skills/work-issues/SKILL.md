@@ -11,6 +11,8 @@ De gebruiker kijkt hier niet actief naar: de bedoeling is dat dit zonder tussenk
 
 Opdracht van de gebruiker: $ARGUMENTS
 
+**Volg strikt `.claude/rules/commandos.md`: één eenvoudig commando per keer.** Elk langer commando legt de hele reeks stil tot de gebruiker toestemming geeft, en die kijkt hier niet naar.
+
 ## Waarom een agent per issue
 
 Zonder uitbesteding wordt alles één lang gesprek, en dan zit de gebruiker snel aan de limiet van het abonnement. Daarom:
@@ -25,7 +27,7 @@ Zonder uitbesteding wordt alles één lang gesprek, en dan zit de gebruiker snel
 2. Bepaal de hoofdbranch: `gh repo view --json defaultBranchRef --jq .defaultBranchRef.name`.
 3. Bekijk `git status --porcelain`:
    - **Alles is opgeslagen:** ga verder.
-   - **Alleen `CLAUDE.md` en/of `PROJECT_OVERVIEW.md` zijn nieuw of gewijzigd:** dat is normaal na `/setup` en `/init`. Sta je op de hoofdbranch, commit en push die bestanden dan rechtstreeks met de boodschap `Projectdocumenten bijwerken`.
+   - **Alleen `CLAUDE.md` en/of `PROJECT_OVERVIEW.md` zijn nieuw of gewijzigd:** dat is normaal na `/setup` en `/init`. Sta je op de hoofdbranch, voer dan na elkaar `git add` met die bestanden, `git commit -m "Projectdocumenten bijwerken"` en `git push` uit.
    - **Er staat iets anders open:** stop. Toon de bestanden en vraag wat er moet gebeuren.
 
 ## Stap 2: bepalen welke issues
@@ -40,7 +42,11 @@ Controleer dat elk issue open is. Zeg in één regel wat je gaat doen, bijvoorbe
 
 ```
 git checkout <hoofdbranch>
+```
+```
 git pull --ff-only
+```
+```
 git checkout -b issues-<eerste>-<laatste>
 ```
 
@@ -50,7 +56,7 @@ Is er maar één issue: `issue-<N>`.
 
 Start per issue een nieuwe agent van het type `general-purpose` met deze opdracht, en wacht op het resultaat voor je de volgende start:
 
-> Werk GitHub-issue #N uit met de skill /work-issue. Je wordt opgeroepen door /work-issues: de branch `<branch>` staat al klaar, bevat eventueel werk van vorige issues en daar bouw je op verder. Controleer met `git branch --show-current` dat je erop staat voor je commit. Maak geen nieuwe branch, push niet en maak geen pull request. Eindig met het RESULTAAT-blok uit de skill.
+> Werk GitHub-issue #N uit met de skill /work-issue. Volg strikt `.claude/rules/commandos.md`: één eenvoudig commando per keer. Je wordt opgeroepen door /work-issues: de branch `<branch>` staat al klaar, bevat eventueel werk van vorige issues en daar bouw je op verder. Controleer met `git branch --show-current` dat je erop staat voor je commit. Maak geen nieuwe branch, push niet en maak geen pull request. Eindig met het RESULTAAT-blok uit de skill.
 > Eerder in deze reeks: <één regel per vorig issue, als dat voor dit issue nuttig is>
 
 Bewaar van elk resultaat de status, de tests en de notities.
@@ -65,10 +71,10 @@ Controleer met `git log <hoofdbranch>..HEAD --oneline` dat er commits zijn.
 
 Zijn er geen: verwijder de branch, ga terug naar de hoofdbranch en spring naar stap 9.
 
-Anders: push met `git push -u origin <branch>` en maak één pull request:
+Anders: push met `git push -u origin <branch>`, schrijf de beschrijving naar `.tmp/pr.md` met de schrijftool, en maak één pull request:
 
 ```
-gh pr create --base <hoofdbranch> --title "<korte titel>" --body "<beschrijving>"
+gh pr create --base <hoofdbranch> --title "<korte titel>" --body-file .tmp/pr.md
 ```
 
 De beschrijving bevat per issue een regel over wat er veranderd is, de echte testresultaten, wat er niet gelukt is en waarom, en een regel `Closes #N` voor elk issue met `status: committed`. Pull requests vormen de geschiedenis van de beslissingen: later kan een AI hier terugvinden waarom iets zo gemaakt is.

@@ -10,6 +10,9 @@ build/
 .pub/
 coverage/
 
+# Tijdelijke teksten voor issues en pull requests
+.tmp/
+
 # Geheimen en lokale instellingen
 .env
 .env.*

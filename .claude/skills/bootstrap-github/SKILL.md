@@ -9,6 +9,8 @@ Eenmalige voorbereiding van de repo. Je mag dit veilig opnieuw uitvoeren: wat al
 
 De gebruiker heeft geen programmeerervaring. Praat in de taal van de gebruiker en leg in één zin uit wat je doet. Vraag geen bevestiging: alles hier is eenvoudig terug te draaien.
 
+Volg `.claude/rules/commandos.md`: één eenvoudig commando per keer.
+
 ## Stap 1: controleren
 
 Controleer het volgende. Lukt iets niet, leg dan in gewone taal uit wat er ontbreekt en help het oplossen.
@@ -19,7 +21,7 @@ Controleer het volgende. Lukt iets niet, leg dan in gewone taal uit wat er ontbr
 
 ## Stap 2: sjablonen kopiëren
 
-Kopieer de bestanden uit `.claude/skills/bootstrap-github/templates/` ongewijzigd naar `.github/`, met dezelfde mapstructuur:
+Lees de bestanden uit `.claude/skills/bootstrap-github/templates/` en schrijf ze ongewijzigd naar `.github/`, met dezelfde mapstructuur. Gebruik daarvoor de lees- en schrijftool:
 
 - `ISSUE_TEMPLATE/bug.yml`, `feature.yml`, `enhancement.yml`, `chore.yml`, `docs.yml`, `config.yml`
 - `pull_request_template.md`
@@ -37,6 +39,8 @@ Bekijk de bestaande labels met `gh label list`. Maak alleen aan wat ontbreekt:
 | `docs` | `5319e7` | Documentatie |
 | `blocked` | `b60205` | Wacht op iets anders |
 
+Eén commando per label:
+
 ```
 gh label create <naam> --color "<kleur>" --description "<omschrijving>"
 ```
@@ -47,9 +51,15 @@ De labels `bug` en `enhancement` bestaan standaard al op GitHub. Bestaande label
 
 Commit en push rechtstreeks naar de hoofdbranch. Dit is de enige keer dat dat de bedoeling is: er is nog geen issue om aan te koppelen, en deze bestanden raken je app niet.
 
+Voer deze drie commando's na elkaar uit:
+
 ```
 git add .github
+```
+```
 git commit -m "Sjablonen voor issues en pull requests toevoegen"
+```
+```
 git push
 ```
 

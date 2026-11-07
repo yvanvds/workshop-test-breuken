@@ -9,6 +9,8 @@ Elke wijziging hoort bij een issue. Het issue zegt wat er moet gebeuren en wanne
 
 De gebruiker heeft geen programmeerervaring. Praat in de taal van de gebruiker en leg dingen uit zonder jargon.
 
+Volg `.claude/rules/commandos.md`: één eenvoudig commando per keer.
+
 ## Twee manieren waarop je wordt opgeroepen
 
 - **Door `/work-issues`:** er staat al een branch klaar en er is niemand om vragen aan te stellen. Volg stap 1, 3, 4 en 5, en eindig met het verslag uit stap 7. Maak geen branch of pull request. Is iets onduidelijk of onmogelijk, gok dan niet: geef `status: blocked` terug.
@@ -28,7 +30,11 @@ Alleen als de gebruiker je rechtstreeks oproept. Bepaal de hoofdbranch met `gh r
 
 ```
 git checkout <hoofdbranch>
+```
+```
 git pull --ff-only
+```
+```
 git checkout -b issue-<N>-<korte-omschrijving>
 ```
 
@@ -73,6 +79,8 @@ Commit met een korte boodschap die naar het issue verwijst, zonder `Closes`:
 
 ```
 git add <de gewijzigde bestanden>
+```
+```
 git commit -m "<wat er veranderd is> (#<N>)"
 ```
 

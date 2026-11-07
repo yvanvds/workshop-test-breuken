@@ -9,6 +9,8 @@ Alles wat op een branch stond, zit nu in de hoofdbranch. De branch is dus niet m
 
 Praat in de taal van de gebruiker. Word je opgeroepen door `/work-issues`, dan is er niemand om vragen aan te stellen: stel dan geen vragen, en stop en meld het probleem als iets niet klopt.
 
+Volg `.claude/rules/commandos.md`: één eenvoudig commando per keer.
+
 ## Stap 1: branch en pull request bepalen
 
 1. Bepaal de hoofdbranch: `gh repo view --json defaultBranchRef --jq .defaultBranchRef.name`
@@ -36,6 +38,8 @@ Issues die GitHub al automatisch sloot, sla je over.
 
 ```
 git checkout <hoofdbranch>
+```
+```
 git pull --prune
 ```
 

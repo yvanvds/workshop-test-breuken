@@ -12,6 +12,8 @@ De gebruiker heeft geen programmeerervaring en schrijft hooguit een paar zinnen.
 
 Praat in de taal van de gebruiker en schrijf ook de issues in die taal. **Je wijzigt geen code.** Is de opdracht leeg, vraag dan wat de gebruiker wil verbeteren of wat er fout gaat.
 
+Volg `.claude/rules/commandos.md`: één eenvoudig commando per keer.
+
 ## Stap 1: zoek uit wat er echt aan de hand is
 
 - Lees `PROJECT_OVERVIEW.md` en `CLAUDE.md` als die bestaan.
@@ -51,11 +53,13 @@ Schrijf bij "wanneer het klaar is" concrete punten die je kan controleren, ook v
 
 Schrijf geen echte leerlinggegevens in een issue. Issues in een publieke repo zijn voor iedereen zichtbaar.
 
-Maak de issues in de juiste volgorde, zodat de nummers kloppen:
+Maak de issues een voor een, in de juiste volgorde, zodat de nummers kloppen. Schrijf de tekst eerst naar `.tmp/issue.md` met de schrijftool, voer daarna dit commando uit, en lees het nummer in het resultaat. Dat nummer gebruik je letterlijk in de tekst van het volgende issue:
 
 ```
-gh issue create --title "<korte titel>" --label "<label>" --body "<tekst>"
+gh issue create --title "<korte titel>" --label "<label>" --body-file .tmp/issue.md
 ```
+
+Schrijf nooit een script dat meerdere issues tegelijk maakt.
 
 ## Stap 4: afronden
 

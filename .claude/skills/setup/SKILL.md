@@ -17,6 +17,7 @@ De gebruiker is meestal een leerkracht zonder programmeerervaring, en heeft hier
 - Weet de gebruiker het niet, doe dan een voorstel met één zin uitleg en ga verder. "Dat weet ik niet" is een goed antwoord.
 - Geef bij technische keuzes altijd jouw aanbeveling. De gebruiker hoeft alleen ja te zeggen, of te zeggen dat het anders moet.
 - **Je schrijft geen applicatiecode.** Dat gebeurt later via issues.
+- Volg `.claude/rules/commandos.md`: één eenvoudig commando per keer. Kijk de tools dus een voor een na.
 
 Bestaat `PROJECT_OVERVIEW.md` al, lees die dan eerst en vraag alleen wat nog ontbreekt of wat er verandert.
 
@@ -96,11 +97,11 @@ Controleer daarna GitHub:
 
 1. `gh auth status`. Is de gebruiker niet aangemeld, vraag dan om `gh auth login` zelf uit te voeren door in de prompt `! gh auth login` te typen, en leg uit dat GitHub, HTTPS en aanmelden via de browser de juiste keuzes zijn.
 2. Laat git het account van `gh` gebruiken: `gh auth setup-git`.
-3. Kijk na of `git config user.name` en `git config user.email` ingesteld zijn. Zo niet, stel ze dan in voor deze repo, met het anonieme GitHub-adres zodat het privé-mailadres van de gebruiker niet in de publieke geschiedenis komt:
+3. Stel de naam en het mailadres in voor deze repo, met het anonieme GitHub-adres, zodat het privé-mailadres van de gebruiker niet in de publieke geschiedenis komt. Vraag eerst `gh api user --jq .login` en daarna `gh api user --jq .id` op, en vul de waarden letterlijk in:
    ```
-   gh api user --jq .login
-   gh api user --jq .id
    git config user.name "<login>"
+   ```
+   ```
    git config user.email "<id>+<login>@users.noreply.github.com"
    ```
 
@@ -146,9 +147,15 @@ Toon de gebruiker een korte samenvatting en vraag of dit klopt. Pas aan wat nog 
 
 Commit en push daarna rechtstreeks naar de hoofdbranch. Dit is geen code, en er zijn nog geen issues om aan te koppelen:
 
+Voer deze drie commando's na elkaar uit:
+
 ```
 git add PROJECT_OVERVIEW.md
+```
+```
 git commit -m "Projectoverzicht toevoegen"
+```
+```
 git push
 ```
 
